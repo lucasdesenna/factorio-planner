@@ -1,0 +1,10 @@
+.clj-kondo/.cache
+.nrepl-port
+.shadow-cljs
+.vscode
+.zprintrc
+node_modules
+out
+public/js
+report.html
+yarn-error.log
