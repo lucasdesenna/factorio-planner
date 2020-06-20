@@ -8,7 +8,6 @@
             [devcards.core :refer [start-devcard-ui!]]
             ["jsdom-global" :as jsdom-global]
             ; Import all namespaces with cards here to load them.
-            [app.modules.hello.cards]
             [app.modules.output-selector.cards]
             [app.modules.input-selector.cards]))
 
