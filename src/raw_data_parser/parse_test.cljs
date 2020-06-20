@@ -1,5 +1,5 @@
 (ns raw-data-parser.parse-test
-  (:require [cljs.test :include-macros true :refer [deftest is are testing]]
+  (:require [cljs.test :include-macros true :refer [deftest is are]]
             [raw-data-parser.parse :as parse]))
 
 (deftest name->id

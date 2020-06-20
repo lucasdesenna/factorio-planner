@@ -1,7 +1,19 @@
 (ns raw-data-parser.parse
-  (:require [app.common.item.logic :as item.l]
+  (:require [clojure.string :as string]
             [shadow.resource :as rc]
             [cognitect.transit :as t]))
+
+(defn name->id [name]
+  (-> name
+      string/lower-case
+      (string/replace #" " "-")
+      keyword))
+
+(defn id->name [id]
+  (-> id
+      name
+      (string/replace #"-" " ")
+      string/capitalize))
 
 (defn- prefixate-keyword [prefix k]
   (->> k
@@ -16,7 +28,7 @@
                x)))
 
 (defn- keywordize-keys [[k v]]
-  [(item.l/name->id k)
+  [(name->id k)
    (cond
      (or (map? v)
          (k-v-coll? v))
@@ -25,7 +37,7 @@
           (into {}))
 
      (coll? v)
-     (mapv item.l/name->id v)
+     (mapv name->id v)
 
      :else
      v)])
@@ -44,7 +56,7 @@
                     (map (fn [[k v]] [(kw->item-kw k) v]))
                     (into {}))]
     [recipe-kw #:recipe {:id recipe-kw
-                         :name (item.l/id->name k)
+                         :name (id->name k)
                          :time (:time recipe)
                          :input input
                          :output output
@@ -72,7 +84,7 @@
               (merge-with merge-items
                           acc
                           {item-kw (assoc {:item/id item-kw
-                                           :item/name (item.l/id->name id)}
+                                           :item/name (id->name id)}
                                           relationship-kw [recipe-id])})))
           {}
           recipe-fragment))
