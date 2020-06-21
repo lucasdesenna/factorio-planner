@@ -28,7 +28,6 @@
             [:div
              [:p (name k)]
              [:p (str "Assemblers " assemblers)]
-
              (for [[k v] consumption-per-sec]
                ^{:key (str "factory-preview-consumption" (name k))}
                [:p (str (name k) " " v)])])]))

@@ -97,4 +97,3 @@
              {id {:assemblers req-assemblers
                   :consumption-per-sec consumption-per-sec}}
              input))))
-
