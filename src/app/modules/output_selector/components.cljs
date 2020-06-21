@@ -34,10 +34,10 @@
             []
             (range row-count))))
 
-(defn- recipe-details [{:keys [id]
-                        recipe-name :name
-                        :as props}]
-  (let [attributes (select-keys props [:input :producers :output])
+(defn- item-details [{:keys [id]
+                      item-name :name
+                      :as props}]
+  (let [attributes (select-keys props [:produced-by :consumed-by])
         header (->> attributes keys (mapv #(string/capitalize (name %))))
         rows (->> attributes vals columns->rows)]
     [:> Grid {:container true}
@@ -46,7 +46,7 @@
       [:> Typography {:gutter-bottom true
                       :variant "h5"
                       :component "h2"}
-       recipe-name]
+       item-name]
       [:> Typography {:gutter-bottom true
                       :color "textSecondary"}
        (str ":" id)]]
@@ -56,12 +56,12 @@
        [:> TableHead
         [:> TableRow
          (for [cell header]
-           ^{:key (str recipe-name "-" cell)}
+           ^{:key (str item-name "-" cell)}
            [:> TableCell cell])]]
        [:> TableBody
         (for [r (range (count rows))
               :let [row (get rows r)
-                    row-key (str recipe-name "-row-" r)]]
+                    row-key (str item-name "-row-" r)]]
           ^{:key row-key}
           [:> TableRow
            (for [c (range (count row))
@@ -77,11 +77,11 @@
                              #js{}
                              props
                              #js{:variant "outlined"
-                                 :label "Recipe"})))
+                                 :label "Outputs"})))
 
-(defn- search-field [{:keys [recipes
+(defn- search-field [{:keys [items
                              on-highlight-change]}]
-  [:> Autocomplete {:options recipes
+  [:> Autocomplete {:options items
                      ;; Note that the function parameter is a JS Object!
                      ;; Autocomplete expects the renderInput value to be function
                      ;; returning React elements, not a component!
@@ -95,20 +95,20 @@
                                            .-name)
                     :render-input render-search-input}])
 
-(defn output-selector [{:keys [recipes]}]
-  (let [recipes (vals recipes)
-        state (r/atom {:selected-recipe nil})
-        handle-recipe-selection (fn [^js _ recipe]
-                                  (swap! state assoc :selected-recipe (js->clj recipe :keywordize-keys true)))]
+(defn output-selector [{:keys [items]}]
+  (let [items (vals items)
+        state (r/atom {:selected-item nil})
+        handle-item-selection (fn [^js _ item]
+                                (swap! state assoc :selected-item (js->clj item :keywordize-keys true)))]
     (fn []
       [:> Paper
        [:> Box {:p 3}
         [:> Grid {:container true :spacing 2}
          [:> Grid {:item true
                    :xs 12}
-          [search-field {:recipes recipes
-                         :on-highlight-change handle-recipe-selection}]]
-         (when-let [recipe (:selected-recipe @state)]
+          [search-field {:items items
+                         :on-highlight-change handle-item-selection}]]
+         (when-let [item (:selected-item @state)]
            [:> Grid {:item true
                      :xs 12}
-            [recipe-details recipe]])]]])))
+            [item-details item]])]]])))

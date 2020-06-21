@@ -2,7 +2,7 @@
   (:require [devcards.core :as dc :refer [defcard deftest]]
             [cljs.test :include-macros true :refer [is]]
             [app.modules.output-selector.components :refer [output-selector]]
-            [app.recipes :as recipes]))
+            [app.items :as items]))
 
 (defn testing-container
   "The container that should be used to render testing-library react components.
@@ -13,4 +13,4 @@
     (js/document.body.appendChild app-div)))
 
 (defcard output-selector-card
-  (dc/reagent #(output-selector {:recipes recipes/all})))
+  (dc/reagent #(output-selector {:items items/all})))
