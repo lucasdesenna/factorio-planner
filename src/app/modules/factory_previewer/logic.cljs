@@ -3,11 +3,11 @@
             [app.items :as items]))
 
 (defn item-id->item
-  ([id] (item-id->item id recipes/all))
+  ([id] (item-id->item id items/all))
 
-  ([id all-recipes]
-   (if-let [recipe (get all-recipes id)]
-     recipe
+  ([id all-items]
+   (if-let [item (get all-items id)]
+     item
      (throw (js/Error. (str "No Item of ID " id " found."))))))
 
 (defn recipe-id->recipe
