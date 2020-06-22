@@ -10,7 +10,7 @@
             ; Import all namespaces with cards here to load them.
             [app.common.denormalize.cards]
             [app.modules.input-selector.cards]
-            [app.modules.factory-previewer.cards]
+            [app.modules.requirements-viewer.cards]
             [app.modules.output-selector.cards]))
 
 ; Set jsdom to mock a dom environment for node testing.
