@@ -11,7 +11,8 @@
             [app.common.denormalize.cards]
             [app.modules.input-selector.cards]
             [app.modules.requirements-viewer.cards]
-            [app.modules.output-selector.cards]))
+            [app.modules.output-selector.cards]
+            [app.views.main.cards]))
 
 ; Set jsdom to mock a dom environment for node testing.
 (jsdom-global)
