@@ -23,18 +23,17 @@
                                    output-amount
                                    items
                                    recipes]}]
-  (if (and input output-amount output-id)
-    (let [requirements (some-> output-id
-                               (c.d.logic/denormalize {:ignored-ids (set input)
-                                                       :items items
-                                                       :recipes recipes})
-                               (logic/denormalized-item->requirements output-amount))]
-      [:div (for [[k {:keys [assemblers consumption-per-sec]}] requirements]
-              ^{:key (str "factory-preview-" (name k))}
-              [:div
-               [:p (name k)]
-               [:p (str "Assemblers " assemblers)]
-               (for [[k v] consumption-per-sec]
-                 ^{:key (str "factory-preview-consumption" (name k))}
-                 [:p (str (name k) " " v)])])])
+  (if-let [requirements (some-> output-id
+                                (c.d.logic/denormalize {:ignored-ids (set input)
+                                                        :items items
+                                                        :recipes recipes})
+                                (logic/denormalized-item->requirements output-amount))]
+    [:div (for [[k {:keys [assemblers consumption-per-sec]}] requirements]
+            ^{:key (str "factory-preview-" (name k))}
+            [:div
+             [:p (name k)]
+             [:p (str "Assemblers " assemblers)]
+             (for [[k v] consumption-per-sec]
+               ^{:key (str "factory-preview-consumption" (name k))}
+               [:p (str (name k) " " v)])])]
     [:p "Select inputs and outputs for your factory."]))

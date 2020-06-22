@@ -24,12 +24,23 @@
                     {:keys [ignored-ids]
                      :or {ignored-ids #{}}
                      :as options}]
-  (if-let [main-producer (some-> (remove (partial contains? ignored-ids) produced-by)
-                                 first
-                                 (denorm-fn options))]
-    (assoc item
-           :item/produced-by main-producer)
-    (dissoc item :item/produced-by)))
+
+  ;; TODO: Deal with items with multiple producers
+  ;; e.g.: 
+  ;; :item.petroleum-gas
+  ;; :item.lubricant
+  ;; :item.light-oil
+  ;; :item.heavy-oil
+
+  (let [filtered-produced-by (some->> produced-by
+                                      (remove (partial contains? ignored-ids)))]
+    (if (and filtered-produced-by
+             (= 1 (count filtered-produced-by)))
+      (assoc item
+             :item/produced-by (-> filtered-produced-by
+                                   first
+                                   (denorm-fn options)))
+      (dissoc item :item/produced-by))))
 
 (defn- denorm-recipe [{:recipe/keys [input]
                        :as recipe}

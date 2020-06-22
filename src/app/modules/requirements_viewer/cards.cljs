@@ -58,12 +58,13 @@
               :recipe/output {:item.c 1}}})
 
 (deftest denormalized-item->requirements
-  (testing "Production requirements of given a denormalized item"
+  (testing "Calculates production requirements of given a denormalized item"
     (are [item-id requirements] (= (-> item-id
                                        (c.d.l/denormalize {:all-items all-items
                                                            :all-recipes all-recipes})
                                        fac-pre.l/denormalized-item->requirements)
                                    requirements)
+      :item.raw-a {}
       :item.a {:recipe.a {:assemblers 0.5
                           :consumption-per-sec {:item.raw-a 0.5}}}
       :item.b {:recipe.a {:assemblers 4

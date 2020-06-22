@@ -13,19 +13,19 @@
   ([item] (denormalized-item->requirements item 1))
 
   ([{item-id :item/id :as item} req-output-per-sec]
-   (let [{:recipe/keys [id time input output]} (:item/produced-by item)
-         output-per-sec (-> output
-                            item-id
-                            (/ time))
-         req-assemblers (/ req-output-per-sec output-per-sec)
-         consumption-per-sec (->> input
-                                  (map (fn [[{:item/keys [id]} amount]] [id (/ (* amount req-assemblers) time)]))
-                                  (into {}))]
-     (reduce (fn [acc [item' amount]]
-               (if (:item/produced-by item')
+   (if-let [produced-by (:item/produced-by item)]
+     (let [{:recipe/keys [id time input output]} produced-by
+           output-per-sec (-> output
+                              item-id
+                              (/ time))
+           req-assemblers (/ req-output-per-sec output-per-sec)
+           consumption-per-sec (->> input
+                                    (map (fn [[{:item/keys [id]} amount]] [id (/ (* amount req-assemblers) time)]))
+                                    (into {}))]
+       (reduce (fn [acc [item' amount]]
                  (let [req-output-per-sec (/ (* amount req-assemblers) time)]
-                   (merge-requirements acc (denormalized-item->requirements item' req-output-per-sec)))
-                 acc))
-             {id {:assemblers req-assemblers
-                  :consumption-per-sec consumption-per-sec}}
-             input))))
+                   (merge-requirements acc (denormalized-item->requirements item' req-output-per-sec))))
+               {id {:assemblers req-assemblers
+                    :consumption-per-sec consumption-per-sec}}
+               input))
+     {})))
