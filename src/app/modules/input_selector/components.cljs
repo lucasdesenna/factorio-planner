@@ -78,23 +78,22 @@
          [:> ListItemIcon [:> RemoveCircle {:color "secondary"}]]
          [:> ListItemText item-name]])]]]])
 
-(def default-main-bus-items
-  [:item.iron-plate
-   :item.copper-plate
-   :item.stone
-   :item.steel-plate
-   :item.electronic-circuit])
-
-(defn input-selector [{:keys [items default-inputs]
-                       :or {default-inputs default-main-bus-items}}]
-  (let [state (r/atom {:selected-items (select-keys items default-inputs)
-                       :unselected-items (apply dissoc (concat [items] default-inputs))})
+(defn input-selector [{:keys [items
+                              input
+                              on-input-change]
+                       :or {input []}}]
+  (let [state (r/atom {:selected-items (select-keys items input)
+                       :unselected-items (apply dissoc (concat [items] input))})
+        handle-input-change #(when on-input-change
+                               (on-input-change (:selected-items @state)))
         handle-item-selection (fn [item-id]
                                 (swap! state update :selected-items assoc item-id (get items item-id))
-                                (swap! state update :unselected-items dissoc item-id))
+                                (swap! state update :unselected-items dissoc item-id)
+                                (handle-input-change))
         handle-item-deselection (fn [item-id]
                                   (swap! state update :selected-items dissoc item-id)
-                                  (swap! state update :unselected-items assoc item-id (get items item-id)))]
+                                  (swap! state update :unselected-items assoc item-id (get items item-id))
+                                  (handle-input-change))]
     (fn []
       [:> Paper
        [:> Box {:p 3}
