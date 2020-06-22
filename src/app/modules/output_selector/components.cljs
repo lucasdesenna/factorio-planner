@@ -13,6 +13,7 @@
             ["@material-ui/core/TextField" :default TextField]
             ["@material-ui/core/Typography" :default Typography]
             ["@material-ui/lab/Autocomplete" :default Autocomplete]
+            [app.common.denormalize.logic :as c.d.logic]
             [clojure.string :as string]
             [reagent.impl.template :as rtpl]
             [reagent.core :as r]))
@@ -95,11 +96,20 @@
                                            .-name)
                     :render-input render-search-input}])
 
-(defn output-selector [{:keys [items]}]
-  (let [items (vals items)
-        state (r/atom {:selected-item nil})
+(defn output-selector [{:keys [items
+                               output-id
+                               output-amount
+                               on-output-id-change
+                               on-output-amount-change]}]
+  (let [state (r/atom {:selected-item (when output-id (c.d.logic/item-id->item output-id))})
+        items (vals items)
+        handle-output-id-change #(when on-output-id-change (on-output-id-change %))
+        handle-output-amount-change #(when on-output-amount-change (on-output-amount-change %))
         handle-item-selection (fn [^js _ item]
-                                (swap! state assoc :selected-item (js->clj item :keywordize-keys true)))]
+                                (let [{:keys [id]
+                                       :as item} (js->clj item :keywordize-keys true)]
+                                  (swap! state assoc :selected-item item)
+                                  (handle-output-id-change (keyword id))))]
     (fn []
       [:> Paper
        [:> Box {:p 3}
